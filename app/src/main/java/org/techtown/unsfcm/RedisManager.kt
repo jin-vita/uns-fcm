@@ -5,19 +5,19 @@ import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.sync.RedisCommands
 
 class RedisManager {
-    private val redisClient: RedisClient = RedisClient.create("redis://your_redis_server_ip:6379")
+    private val redisClient: RedisClient = RedisClient.create("redis://${AppData.REDIS_HOST}:${AppData.REDIS_PORT}")
     private val connection: StatefulRedisConnection<String, String> = redisClient.connect()
     private val syncCommands: RedisCommands<String, String> = connection.sync()
 
-    fun setTokenInRedis(token: String) {
-        syncCommands.set("test01", token)
+    fun set(channel: String, token: String) {
+        syncCommands.set(channel, token)
     }
 
-    fun getValueFromRedis(key: String): String? {
+    fun get(key: String): String? {
         return syncCommands.get(key)
     }
 
-    fun closeConnection() {
+    fun close() {
         connection.close()
         redisClient.shutdown()
     }

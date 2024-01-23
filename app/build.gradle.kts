@@ -34,6 +34,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packaging {
+        resources {
+            excludes.add("META-INF/INDEX.LIST")
+            excludes.add("META-INF/io.netty.versions.properties")
+        }
+    }
 }
 
 dependencies {
@@ -49,6 +55,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
-    
+
     implementation("io.lettuce:lettuce-core:6.1.8.RELEASE")
 }

@@ -18,7 +18,8 @@ class PushService : FirebaseMessagingService() {
         AppData.error(TAG, "---- message notification ----")
         AppData.debug(TAG, "title: ${message.notification?.title}")
         AppData.debug(TAG, "body: ${message.notification?.body}")
-        AppData.error(TAG, "---- message notification ----")
+        AppData.error(TAG, "---- message data ----")
+        AppData.debug(TAG, "data: ${message.data}")
         sendToActivity("PUSH", message.data["body"].toString())
     }
 

@@ -10,7 +10,9 @@ import java.net.SocketException
 object AppData {
     val logList by lazy { mutableListOf<String>() }
 
-    const val ACTION_REDIS_DATA = "org.techtown.redis.data"
+    const val ACTION_REMOTE_DATA = "org.techtown.remote.data"
+    const val REDIS_HOST = "192.168.226.110"
+    const val REDIS_PORT = 6379
 
     var isDebug = true
     fun debug(tag: String, msg: String) {
