@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import org.techtown.unsfcm.databinding.ActivityMainBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -151,7 +154,7 @@ class MainActivity : AppCompatActivity() {
     private fun setData(data: String) {
         val method = Thread.currentThread().stackTrace[2].methodName
         AppData.debug(tag, "$method called. data: $data")
-        // TODO: 레디스로부터 받은 메시지 처리 로직 작성
+        // TODO: 받은 메시지 처리 로직 작성
     }
 
     private fun setToken(channel: String, disconnect: Boolean = false) {
@@ -179,12 +182,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getToken(channel: String): String = redisManager.get(channel) ?: ""
-
     private fun sendData(channel: String, data: String) {
         printLog("to $channel : $data")
-        val token = getToken(channel)
-        printLog("$channel token : $token")
+        val token = redisManager.get(channel) ?: ""
+        AppData.debug(tag, "$channel token : $token")
+        requestSendData(channel, token, data)
+    }
+
+    private fun requestSendData(channel: String, token: String, data: String) {
+        val method = Thread.currentThread().stackTrace[2].methodName
+        AppData.debug(tag, "$method called. channel: $channel")
+        FcmClient.api.sendData(
+            sender = myChannel,
+            receiver = channel,
+            token = token,
+            data = data
+        ).enqueue(object : Callback<FcmResponse> {
+            override fun onResponse(call: Call<FcmResponse>, response: Response<FcmResponse>) {
+                val code = response.code()
+                if (response.isSuccessful) {
+                    response.body()?.apply {
+                        AppData.error(tag, "$method isSuccessful.")
+                        AppData.debug(tag, "data: $this")
+                    }
+                } else binding.resultText.text = "$method isNotSuccessful. code: $code"
+            }
+
+            override fun onFailure(call: Call<FcmResponse>, t: Throwable) {
+                binding.resultText.text = "$method isFail, ${t.message}"
+            }
+        })
     }
 
     private fun printLog(message: String) = runOnUiThread {

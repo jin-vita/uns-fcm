@@ -1,5 +1,6 @@
 package org.techtown.unsfcm
 
+import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -10,7 +11,7 @@ class PushService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         AppData.error(TAG, "Refreshed token: $token")
-        sendToActivity("TOKEN", token)
+        broadcastToActivity("TOKEN", token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -20,10 +21,14 @@ class PushService : FirebaseMessagingService() {
         AppData.debug(TAG, "body: ${message.notification?.body}")
         AppData.error(TAG, "---- message data ----")
         AppData.debug(TAG, "data: ${message.data}")
-        sendToActivity("PUSH", message.data["body"].toString())
+        broadcastToActivity(message.data["sender"].toString(), message.data["body"].toString())
     }
 
-    private fun sendToActivity(command: String, data: String) {
-        AppData.error(TAG, "command: $command, data: $data")
+    private fun broadcastToActivity(channel: String, data: String) = with(Intent(AppData.ACTION_REMOTE_DATA)) {
+        AppData.error(TAG, "broadcastToActivity called. data : $data")
+        putExtra(Extras.COMMAND, "PUSH")
+        putExtra("channel", channel)
+        putExtra("data", data)
+        sendBroadcast(this)
     }
 }

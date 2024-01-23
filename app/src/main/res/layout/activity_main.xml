@@ -124,7 +124,6 @@
             android:textStyle="italic"
             android:text="@string/disconnect" />
 
-
     </LinearLayout>
 
     <TextView

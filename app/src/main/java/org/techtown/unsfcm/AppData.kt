@@ -14,6 +14,8 @@ object AppData {
     const val REDIS_HOST = "192.168.226.110"
     const val REDIS_PORT = 6379
 
+    const val BASE_URL = "https://$REDIS_HOST:8001/fcm/"
+
     var isDebug = true
     fun debug(tag: String, msg: String) {
         if (isDebug) Log.d(tag, msg)
